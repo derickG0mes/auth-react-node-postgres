@@ -1,0 +1,35 @@
+{
+  "name": "auth-react-node-postgres",
+  "version": "1.0.0",
+  "description": "Primeiro commit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch --env-file=.env src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/derickG0mes/auth-react-node-postgres.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/derickG0mes/auth-react-node-postgres/issues"
+  },
+  "homepage": "https://github.com/derickG0mes/auth-react-node-postgres#readme",
+  "allowScripts": {
+    "@prisma/engines@7.10.1": true,
+    "prisma@7.10.1": true
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "prisma": "^7.10.1"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
+    "dotenv": "^18.0.9"
+  }
+}
