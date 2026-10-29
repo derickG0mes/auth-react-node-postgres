@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   changePasswordSchema,
+  emailSchema,
   loginUserSchema,
   registeredUserSchema,
   userIdParamsSchema,
@@ -12,7 +13,7 @@ test("registration schema normalizes valid user data", () => {
   const result = registeredUserSchema.safeParse({
     name: "  João da Silva ",
     userName: "  Joao123 ",
-    email: "  TESTE@EXAMPLE.COM ",
+    email: "  TESTEE@GMAIL.COM ",
     password: "senha-segura"
   });
 
@@ -20,7 +21,7 @@ test("registration schema normalizes valid user data", () => {
   assert.deepEqual(result.data, {
     name: "João da Silva",
     userName: "Joao123",
-    email: "teste@example.com",
+    email: "testee@gmail.com",
     password: "senha-segura"
   });
 });
@@ -29,7 +30,7 @@ test("registration schema rejects special username characters and extra fields",
   const validUser = {
     name: "João Silva",
     userName: "joao123",
-    email: "joao@example.com",
+    email: "joaosilva@gmail.com",
     password: "senha-segura"
   };
 
@@ -39,14 +40,33 @@ test("registration schema rejects special username characters and extra fields",
 
 test("login schema normalizes email and rejects malformed credentials", () => {
   const result = loginUserSchema.safeParse({
-    email: "  TESTE@EXAMPLE.COM ",
+    email: "  TESTEE@GMAIL.COM ",
     password: "senha-segura"
   });
 
   assert.equal(result.success, true);
-  assert.equal(result.data.email, "teste@example.com");
+  assert.equal(result.data.email, "testee@gmail.com");
   assert.equal(loginUserSchema.safeParse({ email: "invalido", password: "senha-segura" }).success, false);
-  assert.equal(loginUserSchema.safeParse({ email: "user@example.com", password: "curta" }).success, false);
+  assert.equal(loginUserSchema.safeParse({ email: "@gmail.com", password: "senha-segura" }).success, false);
+  assert.equal(loginUserSchema.safeParse({ email: "usuario@gmail.com.evil.org", password: "senha-segura" }).success, false);
+  assert.equal(loginUserSchema.safeParse({ email: "usuario@outlook.com", password: "senha-segura" }).success, false);
+  assert.equal(loginUserSchema.safeParse({ email: "abcde@gmail.com", password: "senha-segura" }).success, false);
+  assert.equal(loginUserSchema.safeParse({ email: "user@gmail.com", password: "curta" }).success, false);
+});
+
+test("email schema accepts only complete Gmail addresses", () => {
+  assert.equal(emailSchema.safeParse(" usuario.123@gmail.com ").success, true);
+  assert.equal(emailSchema.safeParse("abcdef@gmail").success, false);
+  assert.equal(emailSchema.safeParse("abcdef@gmail.co").success, false);
+  assert.equal(emailSchema.safeParse("abcdef@gmail.com.evil.org").success, false);
+  assert.equal(emailSchema.safeParse("@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse("abcde@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse(".abcdef@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse("abcdef.@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse("abc..def@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse("abc_def@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse("abc+def@gmail.com").success, false);
+  assert.equal(emailSchema.safeParse(`${"a".repeat(31)}@gmail.com`).success, false);
 });
 
 test("user ID schema accepts only positive safe integers", () => {

@@ -1,10 +1,26 @@
 // Importa o Zod para declarar os formatos aceitos pela API.
 import { z } from "zod";
 
+// Normaliza o e-mail, verifica seu formato e aceita somente endereços do Gmail.
+export const emailSchema = z.string()
+  .trim()
+  .toLowerCase()
+  .pipe(z.email())
+  .refine((email) => {
+    const [username, domain] = email.split("@");
+
+    return domain === "gmail.com" &&
+      username.length >= 6 &&
+      username.length <= 30 &&
+      /^[a-z0-9]+(?:\.[a-z0-9]+)*$/.test(username);
+  }, {
+    error: "Informe um Gmail com usuário de 6 a 30 letras, números ou pontos"
+  });
+
 // Define e-mail e senha aceitos pela rota de login.
 export const loginUserSchema = z.object({
-  // Remove espaços e normaliza o e-mail antes de validá-lo.
-  email: z.string().trim().toLowerCase().pipe(z.email()),
+  // Aplica o formato válido e restringe o domínio ao Gmail.
+  email: emailSchema,
   // Exige senha com pelo menos 8 e no máximo 300 caracteres.
   password: z.string().min(8).max(300)
   // Rejeita propriedades adicionais no objeto recebido.
@@ -16,8 +32,8 @@ export const registeredUserSchema = z.object({
   name: z.string().trim().min(3).max(100).regex(/^[\p{L}\p{M} ]+$/u),
   // Aceita somente letras Unicode e números no nome de usuário.
   userName: z.string().trim().min(2).max(100).regex(/^(?:\p{L}\p{M}*|\p{N})+$/u),
-  // Normaliza o e-mail para minúsculas e verifica seu formato.
-  email: z.string().trim().toLowerCase().pipe(z.email()),
+  // Aplica o formato válido e restringe o domínio ao Gmail.
+  email: emailSchema,
   // Limita o tamanho da senha antes de gerar o hash.
   password: z.string().min(8).max(300)
   // Rejeita propriedades adicionais no objeto recebido.
