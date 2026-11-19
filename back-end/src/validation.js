@@ -47,6 +47,18 @@ export const userIdParamsSchema = z.object({
   id: userIdSchema
 }).strict();
 
+// Define o campo aceito ao pedir o link de redefinição de senha.
+export const forgotPasswordSchema = z.object({
+  email: emailSchema
+}).strict();
+
+// Define os campos aceitos ao redefinir a senha com o token recebido por e-mail.
+export const resetPasswordSchema = z.object({
+  // O token tem 32 bytes em base64url, ou seja, exatamente 43 caracteres.
+  token: z.string().regex(/^[A-Za-z0-9_-]{43}$/),
+  newPassword: z.string().min(8).max(300)
+}).strict();
+
 // Define os campos necessários para trocar uma senha.
 export const changePasswordSchema = z.object({
   // Exige que a senha atual não esteja vazia e tenha no máximo 300 caracteres.
