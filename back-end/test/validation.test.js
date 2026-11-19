@@ -3,8 +3,10 @@ import test from "node:test";
 import {
   changePasswordSchema,
   emailSchema,
+  forgotPasswordSchema,
   loginUserSchema,
   registeredUserSchema,
+  resetPasswordSchema,
   userIdParamsSchema,
   userIdSchema
 } from "../src/validation.js";

@@ -15,6 +15,20 @@ model Usuario {
   senhaHash  String
   criadoEm   DateTime @default(now())
   atualizadoEm DateTime @updatedAt
+  tokensRedefinicaoSenha TokenRedefinicaoSenha[]
 
   @@map("usuarios")
+}
+
+// Guarda apenas o hash do token enviado por e-mail; o token em si nunca é salvo.
+model TokenRedefinicaoSenha {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int
+  tokenHash String   @unique
+  expiraEm  DateTime
+  criadoEm  DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("tokens_redefinicao_senha")
 }
