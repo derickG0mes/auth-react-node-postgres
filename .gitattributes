@@ -1,0 +1,2 @@
+# Força quebras de linha LF no repositório, em qualquer sistema (Windows, WSL, Linux, macOS).
+* text=auto eol=lf
