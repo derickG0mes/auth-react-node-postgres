@@ -2,6 +2,10 @@
 import "dotenv/config";
 // Fornece as funções para verificar a assinatura e validade de tokens JWT.
 import jwt from "jsonwebtoken";
+// Fornece as operações de acesso ao banco de dados.
+import { prisma } from "../lib/prisma.js";
+// Confere se a versão do token ainda é a vigente para o usuário.
+import { sessaoAindaValida } from "./session.js";
 
 // Lê a chave usada para validar os tokens enviados pelos clientes.
 const JWT_TOKEN = process.env.JWT_TOKEN;
@@ -34,7 +38,7 @@ export function validar(schema, { origem = "body", mensagem = "Dados inválidos"
 }
 
 // Verifica o cookie de acesso e identifica o usuário antes de liberar uma rota protegida.
-export function autenticarToken(req, res, next) {
+export async function autenticarToken(req, res, next) {
   // O ?. evita erro se req.cookies não existir; nesse caso, o token fica undefined.
   const token = req.cookies?.token_acesso;
 
@@ -43,13 +47,33 @@ export function autenticarToken(req, res, next) {
     return res.status(401).json({ erro: "Acesso negado. Token ausente." });
   }
 
+  let payload;
+
   try {
     // Verifica assinatura e expiração; se válido, devolve os dados assinados do usuário.
-    req.user = jwt.verify(token, JWT_TOKEN);
+    payload = jwt.verify(token, JWT_TOKEN);
   } catch {
     // Retorna 403 se o token estiver inválido, adulterado ou expirado.
     return res.status(403).json({ erro: "Token inválido ou expirado." });
   }
+
+  try {
+    // Busca a versão atual do token do usuário para detectar sessões antigas.
+    const usuarioDb = await prisma.usuario.findUnique({
+      where: { id: payload.id },
+      select: { versaoToken: true }
+    });
+
+    // Recusa o token se a senha foi redefinida depois da emissão ou se a conta não existe mais.
+    if (!sessaoAindaValida(payload, usuarioDb)) {
+      return res.status(403).json({ erro: "Token inválido ou expirado." });
+    }
+  } catch (erro) {
+    // Encaminha falhas do banco para o tratamento de erros do Express.
+    return next(erro);
+  }
+
+  req.user = payload;
 
   // Libera a rota protegida após autenticar o usuário.
   return next();
