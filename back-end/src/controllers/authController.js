@@ -33,7 +33,7 @@ export async function login(req, res, next) {
     }
 
     const token = jwt.sign(
-      { id: userDb.id, email: userDb.email },
+      { id: userDb.id, email: userDb.email, tv: userDb.versaoToken },
       JWT_TOKEN,
       { expiresIn: "1d" }
     );
@@ -156,7 +156,8 @@ export async function resetPassword(req, res, next) {
 
       await tx.usuario.update({
         where: { id: registro.usuarioId },
-        data: { senhaHash: passwordHash }
+        // Subir a versão invalida todos os cookies de login emitidos antes da redefinição.
+        data: { senhaHash: passwordHash, versaoToken: { increment: 1 } }
       });
 
       return true;
