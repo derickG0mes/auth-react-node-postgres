@@ -10,24 +10,15 @@ Sistema de autenticação completo com front-end em React e API em Node.js, usan
 - Troca de senha para usuário logado
 - Recuperação de senha ("Esqueceu a senha?") por link enviado por e-mail
 
-<!--
-TELAS DO PROJETO (desativado até os prints existirem)
-
-1. Salve os prints em docs/screenshots/ com estes nomes:
-   login.png, register.png, painel.png, esqueci-senha.png, atualizar-senha.png
-2. Apague a primeira e a última linha deste bloco (as que abrem e fecham o
-   comentário HTML) para ativar a seção.
-
 ## Telas
 
-| Login | Cadastro |
-| --- | --- |
-| ![Tela de login](docs/screenshots/login.png) | ![Tela de cadastro](docs/screenshots/register.png) |
-
-| Painel | Esqueceu a senha | Atualizar senha |
+| Login | Cadastro | Painel |
 | --- | --- | --- |
-| ![Painel após o login](docs/screenshots/painel.png) | ![Pedido do link de redefinição](docs/screenshots/esqueci-senha.png) | ![Troca de senha](docs/screenshots/atualizar-senha.png) |
--->
+| ![Tela de login](docs/screenshots/login.png) | ![Tela de cadastro](docs/screenshots/register.png) | ![Painel após o login](docs/screenshots/painel.png) |
+
+| Esqueceu a senha | Verifique seu e-mail | Redefinir senha |
+| --- | --- | --- |
+| ![Pedido do link de redefinição](docs/screenshots/esqueceu-senha.png) | ![Aviso de e-mail enviado](docs/screenshots/verifica-email.png) | ![Definição da nova senha](docs/screenshots/redefinir-senha.png) |
 
 ## Tecnologias
 
